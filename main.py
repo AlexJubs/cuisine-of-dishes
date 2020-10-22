@@ -18,7 +18,7 @@ def add_dish():
 @app.route('/remove_dish')
 def remove_dish():
 	dish = request.args["dish_name"]
-	print("Removing dish with name {dish}")
+	print(f"Removing dish with name {dish}")
 	return aws_utils.remove_dish(dish)
 
 @app.route('/get_all_dishes')

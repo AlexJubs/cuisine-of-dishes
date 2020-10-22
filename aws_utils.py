@@ -93,7 +93,7 @@ class aws_utils:
                     ":Dish": {'S': dish_name}
                 }
         )
-        return "Items" in query # Items will not exist if dish is not in table
+        return query["Items"] != [] # Items will be '[]' if dish is not in table
 
     def clear_table():
         # scan the table, and delete each item 1 by 1
