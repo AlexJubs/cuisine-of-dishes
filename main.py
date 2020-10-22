@@ -7,8 +7,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def initialize():
-	aws_utils.assert_table_exists()
-	return "initialized table in DynamoDB for your dishes!"
+	return aws_utils.assert_table_exists()
 
 @app.route('/add_dish')
 def add_dish():
@@ -26,6 +25,6 @@ def remove_dish():
 def get_all_dishes():
 	return aws_utils.get_all_dishes()
 
-@app.route('/clear_table')
-def clear_table():
+@app.route('/clear_all_dishes')
+def clear_all_dishes():
 	return aws_utils.clear_table()

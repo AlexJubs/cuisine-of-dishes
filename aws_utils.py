@@ -2,11 +2,33 @@
 import boto3
 
 # dynamodb util for storing dishes
+TableName = "Dishes"
+dynamodb_client = boto3.client("dynamodb")
 
 class aws_utils:
 	def assert_table_exists():
-		# if table exists, return, otherwise 
-		return "ok"
+		# if table exists, return, otherwise craete table
+		if TableName in dynamodb_client.list_tables(){"TableNames"}:
+			return "Dishes table already exists"
+
+		# create table in dynamo
+		response = dynamodb_client.create_table(
+        AttributeDefinitions=[
+            {
+                'AttributeName': 'Artist',
+                'AttributeType': 'S',
+            }
+        ],
+        KeySchema=[
+            {
+                'AttributeName': 'Dish',
+                'KeyType': 'HASH',
+            }
+        ],
+        TableName=TableName
+    	)
+    	print(response)
+		return "Created table in DynamoDB for your dishes!"
 
 	def get_all_dishes():
 		return "ok"
