@@ -24,5 +24,4 @@ def remove_dish():
 
 @app.route('/get_all_dishes')
 def get_all_dishes():
-	dishes = aws_utils.get_all_dishes()
-	return "ok"
+	return aws_utils.get_all_dishes()
