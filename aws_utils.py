@@ -5,6 +5,7 @@ import boto3
 
 class aws_utils:
 	def assert_table_exists():
+		# if table exists, return, otherwise 
 		return "ok"
 
 	def get_all_dishes():
@@ -19,3 +20,7 @@ class aws_utils:
 		return "ok"
 
 	def dish_exists(dish_name):
+		return "ok"
+
+	def clear_table():
+		return "ok"
