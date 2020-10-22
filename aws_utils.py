@@ -3,16 +3,16 @@ import boto3
 
 # dynamodb util for storing dishes
 TableName = "Dishes"
-dynamodb_client = boto3.client("dynamodb")
+dynamo = boto3.client("dynamodb")
 
 class aws_utils:
     def assert_table_exists():
         # if table exists, return, otherwise craete table
-        if TableName in dynamodb_client.list_tables()["TableNames"]:
+        if TableName in dynamo.list_tables()["TableNames"]:
             return "Dishes table already exists!"
 
         # create table in dynamo
-        response = dynamodb_client.create_table(
+        response = dynamo.create_table(
         AttributeDefinitions=[
             {
                 'AttributeName': 'Dish',
@@ -41,23 +41,23 @@ class aws_utils:
     def get_all_dishes():
         return_message = ''
         # make sure that a table exists
-        if TableName not in dynamodb_client.list_tables()["TableNames"]:
+        if TableName not in dynamo.list_tables()["TableNames"]:
             return_message += "Database table for dishes does not exist, creating one \n"
             aws_utils.assert_table_exists()
 
         # return a list of all table items
-        return return_message + str(dynamodb_client.scan(TableName=TableName)["Items"])
+        return return_message + str(dynamo.scan(TableName=TableName)["Items"])
 
     def add_dish(dish_name):
         # check if dish exists if no, return "dish already exists". if yes, return "removed <dish>"
         return_message = ''
         # make sure that a table exists
-        if TableName not in dynamodb_client.list_tables()["TableNames"]:
+        if TableName not in dynamo.list_tables()["TableNames"]:
             return_message += "Database table for dishes does not exist, creating one \n"
             aws_utils.assert_table_exists()
 
         # add / update the item in dynamodb
-        dynamodb_client.update_item(
+        dynamo.update_item(
             TableName=TableName, 
             Key= {
                 'Dish': {"S": dish_name}
@@ -67,11 +67,23 @@ class aws_utils:
         return return_message + "Added dish in the database!"
 
     def remove_dish(dish_name):
-        # check is dish exists. if no, return error. if yes, return "removed <dish>"
+        # make sure a table exists in database
+        if TableName not in dynamo.list_tables()["TableNames"]:
+            return "Table does not exist in the Database, nothing to remove"
+
+        # check is dish exists. if no return error if yes, return "removed <dish> from database"
         return "ok"
 
     def dish_exists(dish_name):
-        return "ok"
+        # query for the dish name, if it exists in the database, it will showup
+        query = dynamo.query(
+            TableName=TableName,
+            KeyConditionExpression="Dish = :Dish",
+            ExpressionAttributeValues = {
+                    ":Dish": {'S': dish_name}
+                }
+        )
+        return "Items" in query # Items will not exist if dish is not in table
 
     def clear_table():
         return "ok"
