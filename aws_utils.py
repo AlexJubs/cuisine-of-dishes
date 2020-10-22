@@ -64,7 +64,7 @@ class aws_utils:
                 }
             )
 
-        return return_message + "Added dish in the database!"
+        return return_message + "Added {} to the database!".format(dish_name)
 
     def remove_dish(dish_name):
         # make sure a table exists in database
