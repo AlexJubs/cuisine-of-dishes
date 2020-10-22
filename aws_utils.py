@@ -72,7 +72,17 @@ class aws_utils:
             return "Table does not exist in the Database, nothing to remove"
 
         # check is dish exists. if no return error if yes, return "removed <dish> from database"
-        return "ok"
+        if (aws_utils.dish_exists(dish_name) == False):
+            return "Dish {} does not exist!".format(dish_name)
+
+        # now we know that dish exists, we can remove
+        dynamo.delete_item(
+            TableName=TableName, 
+            Key= {
+                'Dish': {"S": dish_name}
+                }
+            )
+        return "Removed {} from table".format(dish_name)
 
     def dish_exists(dish_name):
         # query for the dish name, if it exists in the database, it will showup
@@ -86,4 +96,8 @@ class aws_utils:
         return "Items" in query # Items will not exist if dish is not in table
 
     def clear_table():
-        return "ok"
+        # scan the table, and delete each item 1 by 1
+        items = dynamo.scan(TableName=TableName)["Items"]
+        for item in items:
+            dynamo.delete_item(TableName=TableName, Key=item)
+        return "Cleared everything in the Database"
