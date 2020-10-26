@@ -36,7 +36,7 @@ class aws_utils:
             return "Error creating dynamo table \n {}".format(response)
 
         # otherwise, all is good
-        return "Created table in DynamoDB for your dishes!"
+        return "Created table in DynamoDB for your dishes! \n\n {}".format(response)
 
     def get_all_dishes():
         return_message = ''
@@ -72,19 +72,17 @@ class aws_utils:
             return "Table does not exist in the Database, nothing to remove"
 
         # check is dish exists. if no return error if yes, return "removed <dish> from database"
-        if (aws_utils.dish_exists(dish_name) == False):
+        if (aws_utils.get_dish(dish_name) == None):
             return "Dish {} does not exist!".format(dish_name)
 
         # now we know that dish exists, we can remove
         dynamo.delete_item(
             TableName=TableName, 
-            Key= {
-                'Dish': {"S": dish_name}
-                }
+            Key=aws_utils.get_dish(dish_name)
             )
         return "Removed {} from table".format(dish_name)
 
-    def dish_exists(dish_name):
+    def get_dish(dish_name):
         # query for the dish name, if it exists in the database, it will showup
         query = dynamo.query(
             TableName=TableName,
@@ -93,7 +91,10 @@ class aws_utils:
                     ":Dish": {'S': dish_name}
                 }
         )
-        return query["Items"] != [] # Items will be '[]' if dish is not in table
+        # if the dish does not exist, return None
+        if query["Items"] == []:
+            return None
+        return query["Items"][0]
 
     def clear_table():
         # scan the table, and delete each item 1 by 1
