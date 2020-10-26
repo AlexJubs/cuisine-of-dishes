@@ -23,7 +23,7 @@ def remove_dish():
 
 @app.route('/get_all_dishes')
 def get_all_dishes():
-	return aws_utils.get_all_dishes()
+	return str(aws_utils.get_all_dishes())
 
 @app.route('/clear_all_dishes')
 def clear_all_dishes():

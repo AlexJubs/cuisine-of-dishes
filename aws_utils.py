@@ -39,14 +39,12 @@ class aws_utils:
         return "Created table in DynamoDB for your dishes! \n\n {}".format(response)
 
     def get_all_dishes():
-        return_message = ''
         # make sure that a table exists
         if TableName not in dynamo.list_tables()["TableNames"]:
-            return_message += "Database table for dishes does not exist, creating one \n"
-            aws_utils.assert_table_exists()
+            return "Database table for dishes does not exist, create one first"
 
         # return a list of all table items
-        return return_message + str(dynamo.scan(TableName=TableName)["Items"])
+        return dynamo.scan(TableName=TableName).get("Items")
 
     def add_dish(dish_name):
         # check if dish exists if no, return "dish already exists". if yes, return "removed <dish>"
