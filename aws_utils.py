@@ -17,12 +17,20 @@ class aws_utils:
             {
                 'AttributeName': 'Dish',
                 'AttributeType': 'S',
-            }
+            },
+            {
+                'AttributeName': 'recipies',
+                'AttributeType': 'S',
+            },
         ],
         KeySchema=[
             {
                 'AttributeName': 'Dish',
                 'KeyType': 'HASH',
+            },
+            {
+                'AttributeName': 'recipies',
+                'KeyType': 'RANGE',
             }
         ],
         TableName=TableName,
@@ -46,9 +54,10 @@ class aws_utils:
         # return a list of all table items
         return dynamo.scan(TableName=TableName).get("Items")
 
-    def add_dish(dish_name):
+    def add_dish(dish_name, recipies):
         # check if dish exists if no, return "dish already exists". if yes, return "removed <dish>"
         return_message = ''
+        
         # make sure that a table exists
         if TableName not in dynamo.list_tables()["TableNames"]:
             return_message += "Database table for dishes does not exist, creating one \n"
@@ -58,7 +67,8 @@ class aws_utils:
         dynamo.update_item(
             TableName=TableName, 
             Key= {
-                'Dish': {"S": dish_name}
+                'Dish': {"S": dish_name},
+                'recipies': {"S": recipies}
                 }
             )
 
